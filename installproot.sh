@@ -59,7 +59,7 @@ dlfile() {
 	rm DepotDownloader.zip
 	chmod u+x "$installed_rootfs"/alpine/usr/local/bin/DepotDownloader
 	# download wrapper file for depotdownloader
-	curl --retry 10 --retry-delay 2 --retry-all-errors -Lo "$PREFIX"/bin/depotdownloader "https://raw.githubusercontent.com/TheKingFireS/TermuxDepotDownloader/alpine/depotdownloader.sh"
+	curl --retry 10 --retry-delay 2 --retry-all-errors -Lo "$PREFIX"/bin/depotdownloader "https://raw.githubusercontent.com/AruMoon/TermuxDepotDownloader/alpine/depotdownloader.sh"
 	chmod +x "$PREFIX"/bin/depotdownloader
 }
 
@@ -103,17 +103,17 @@ if [ "$arch" = "i686" ]; then
 elif [ "$arch" = "x86_64" ]; then
 	echo "x86 64bit Architecture"
 	installersetup
-	dlfile "https://github.com/TheKingFireS/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-x64-unofficial.zip"
+	dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-x64-unofficial.zip"
 elif [ "$arch" = "arm" ]; then
 	echo "ARM 32bit Architecture"
 	installersetup
-	dlfile "https://github.com/TheKingFireS/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-arm-unofficial.zip"
+	dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-arm-unofficial.zip"
 elif [ "$arch" = "aarch64" ]; then
 	echo "ARM 64bit Architecture"
 	echo "Added \"GC heap initialization failed with error 0x8007000E\" workaround"
 	installersetup
 	echo "export DOTNET_GCHeapHardLimitPercent=40" > "$installed_rootfs"/alpine/etc/profile.d/dotnet.sh
-	dlfile "https://github.com/TheKingFireS/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-arm64-unofficial.zip"
+	dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-arm64-unofficial.zip"
 # Added it, will uncomment when it get supported.
 #elif [ "$arch" = "riscv64" ]; then
 #	echo "RISC-V 64bit Architecture"

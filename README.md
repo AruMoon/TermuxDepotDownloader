@@ -1,11 +1,11 @@
-
+# Mirror of TheKingFireS's repository for safety
 
 ## Install Termux from Github or F-Droid to replace outdated Google Play Store version
  - Github(choose the right architecture or use ``universal``): https://github.com/termux/termux-app/releases/latest
  - F-Droid: https://f-droid.org/en/packages/com.termux
 ## Download and run a script for Termux.
 ```bash
-curl -LO "https://raw.githubusercontent.com/TheKingFireS/TermuxDepotDownloader/alpine/installproot.sh"
+curl -LO "https://raw.githubusercontent.com/AruMoon/TermuxDepotDownloader/alpine/installproot.sh"
 chmod +x installproot.sh
 ./installproot.sh
 ```
