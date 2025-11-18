@@ -24,12 +24,9 @@ installersetup() {
 	proot-distro login alpine --shared-tmp -- apk update
 	proot-distro login alpine --shared-tmp -- apk upgrade
 	proot-distro login alpine --shared-tmp -- apk add doas libstdc++ libgcc
-	proot-distro login alpine --shared-tmp -- apk cache clean
-	(set +o pipefail; rm "$installed_rootfs"/alpine/var/cache/apk/*.apk)
+	proot-distro login alpine --shared-tmp -- apk cache purge
 	# add user
-	proot-distro login alpine --shared-tmp -- addgroup storage
 	proot-distro login alpine --shared-tmp -- adduser -G wheel -D $username
-	proot-distro login alpine --shared-tmp -- adduser $username storage
 	echo "permit nopass :wheel as root" > "$installed_rootfs"/alpine/etc/doas.d/doas.conf
 	chmod u-w  "$installed_rootfs"/alpine/etc/doas.d/doas.conf
 	# setup storage and directory for depotdownloader
