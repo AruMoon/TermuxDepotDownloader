@@ -5,11 +5,15 @@
 set -o pipefail
 shopt -s failglob
 set -u
+# end of safety
 
 # setting env var
 arch=$(dpkg --print-architecture)
 username="user"
-installed_rootfs="$PREFIX/var/lib/proot-distro/installed-rootfs"
+installed_rootfs="$PREFIX/var/lib/proot-distro/containers/alpine/rootfs"
+
+# BETA: download beta version instead of normal
+BETA="${BETA:-0}"
 # end of setting env var
 
 # setting function
@@ -27,8 +31,8 @@ installersetup() {
 	proot-distro login alpine --shared-tmp -- apk cache purge
 	# add user
 	proot-distro login alpine --shared-tmp -- adduser -G wheel -D $username
-	echo "permit nopass :wheel as root" > "$installed_rootfs"/alpine/etc/doas.d/doas.conf
-	chmod u-w  "$installed_rootfs"/alpine/etc/doas.d/doas.conf
+	echo "permit nopass :wheel as root" > "$installed_rootfs"/etc/doas.d/doas.conf
+	chmod u-w  "$installed_rootfs"/etc/doas.d/doas.conf
 	# setup storage and directory for depotdownloader
 	if [ ! -d "$HOME/storage" ]; then
 		print_yellow "Requesting storage permission, please accept."
@@ -52,9 +56,9 @@ dlfile() {
 	# download file and extract file to alpine's bin executable directory
 	url="$1"
 	curl --retry 10 --retry-delay 2 --retry-all-errors -Lo "DepotDownloader.zip" "$url"
-	unzip -j DepotDownloader.zip "DepotDownloader" -d "$installed_rootfs"/alpine/usr/local/bin
+	unzip -j DepotDownloader.zip "DepotDownloader" -d "$installed_rootfs"/usr/local/bin
 	rm DepotDownloader.zip
-	chmod u+x "$installed_rootfs"/alpine/usr/local/bin/DepotDownloader
+	chmod u+x "$installed_rootfs"/usr/local/bin/DepotDownloader
 	# download wrapper file for depotdownloader
 	curl --retry 10 --retry-delay 2 --retry-all-errors -Lo "$PREFIX"/bin/depotdownloader "https://raw.githubusercontent.com/AruMoon/TermuxDepotDownloader/alpine/depotdownloader.sh"
 	chmod +x "$PREFIX"/bin/depotdownloader
@@ -100,22 +104,46 @@ if [ "$arch" = "i686" ]; then
 elif [ "$arch" = "x86_64" ]; then
 	echo "x86 64bit Architecture"
 	installersetup
-	dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-x64-unofficial.zip"
+	if [ "$BETA" -eq 1 ]; then
+		print_yellow "WARNING: You are downloading beta version"
+		sleep 1
+		dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine-beta/DepotDownloader-linux-musl-x64-unofficial.zip"
+	else
+		dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-x64-unofficial.zip"
+	fi
 elif [ "$arch" = "arm" ]; then
 	echo "ARM 32bit Architecture"
 	installersetup
-	dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-arm-unofficial.zip"
+	if [ "$BETA" -eq 1 ]; then
+		print_yellow "WARNING: You are downloading beta version"
+		sleep 1
+		dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine-beta/DepotDownloader-linux-musl-arm-unofficial.zip"
+	else
+		dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-arm-unofficial.zip"
+	fi
 elif [ "$arch" = "aarch64" ]; then
 	echo "ARM 64bit Architecture"
 	echo "Added \"GC heap initialization failed with error 0x8007000E\" workaround"
 	installersetup
-	echo "export DOTNET_GCHeapHardLimitPercent=40" > "$installed_rootfs"/alpine/etc/profile.d/dotnet.sh
-	dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-arm64-unofficial.zip"
+	echo "export DOTNET_GCHeapHardLimitPercent=40" > "$installed_rootfs"/etc/profile.d/dotnet.sh
+	if [ "$BETA" -eq 1 ]; then
+		print_yellow "WARNING: You are downloading beta version"
+		sleep 1
+		dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine-beta/DepotDownloader-linux-musl-arm64-unofficial.zip"
+	else
+		dlfile "https://github.com/AruMoon/TermuxDepotDownloader/releases/download/selfcontained-alpine/DepotDownloader-linux-musl-arm64-unofficial.zip"
+	fi
 # Added it, will uncomment when it get supported.
 #elif [ "$arch" = "riscv64" ]; then
 #	echo "RISC-V 64bit Architecture"
 #	installersetup
-#	dlfile "..."
+#	if [ "$BETA" -eq 1 ]; then
+#		print_yellow "WARNING: You are downloading beta version"
+#		sleep 1
+#		dlfile "..."
+#	else
+#		dlfile "..."
+#	fi
 else
 	echo "Unsupported ""$arch"" architecture detected, exiting..."
 	exit 1
